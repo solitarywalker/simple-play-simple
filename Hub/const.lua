@@ -1,0 +1,32 @@
+local const = {}
+
+const.SKINTYPE = {
+
+	MUSIC_SELECT = 5,
+	
+	DECIDE = 6,
+	
+	PLAY_5KEYS	= 1,
+	PLAY_7KEYS	= 0,
+	PLAY_9KEYS	= 4,
+	PLAY_10KEYS	= 3,
+	PLAY_14KEYS	= 2,
+	PLAY_24KEYS	= 16,
+	PLAY_48KEYS	= 17,
+	
+	PLAY_5KEYS_BATTLE	= 13,
+	PLAY_7KEYS_BATTLE	= 12,
+	PLAY_9KEYS_BATTLE	= 14,
+	PLAY_24KEYS_BATTLE	= 18,
+	
+	RESULT			= 7,
+	COURSE_RESULT	= 15,
+	
+	KEY_CONFIG	= 8,
+	SKIN_SELECT	= 9,
+	SOUND_SET	= 10,
+	THEME		= 11
+	
+}
+
+return const

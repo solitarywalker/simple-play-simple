@@ -1,0 +1,7 @@
+SKINTYPE = 2
+local t = require("playmain")
+if skin_config then
+    return t.main()
+else
+    return t.header
+end

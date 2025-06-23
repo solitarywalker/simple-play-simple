@@ -1,0 +1,14 @@
+PATH_SKIN		= package.path
+PATH_HUB		= "?.lua;skin/Hub/?.lua"
+package.path	= PATH_HUB
+const			= require("const")
+SKINTYPE		= const.SKINTYPE.PLAY_7KEYS
+
+local t = require("main")
+
+package.path = PATH_SKIN
+if skin_config then
+    return t.main()
+else
+    return t.header
+end

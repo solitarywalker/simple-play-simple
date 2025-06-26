@@ -1,4 +1,5 @@
 SKINTYPE = 0
+KEYS = 7
 local t = require("playmain")
 if skin_config then
     return t.main()

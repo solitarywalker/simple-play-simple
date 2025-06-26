@@ -25,17 +25,6 @@ local function get_tag_hub()
 	return ""
 end
 
--- スキン種類を取得する
-local function get_skin_category(skintype)
-	if		skintype == 0 then return "7keys"
-	elseif	skintype == 1 then return "5keys"
-	elseif	skintype == 2 then return "14keys"
-	elseif	skintype == 3 then return "10keys"
-	elseif	skintype == 4 then return "9keys"
-	end
-	return "error"
-end
-
 -- スキン構成を書き出す
 local function output_skin_config(header, path)
 	-- propertyの出力
@@ -111,12 +100,7 @@ local function load_settings(path, header, name)
 	else
 		print("simple-play: error " .. tostring(parts))
 		table.insert(err_msg, tostring(parts))
-		if		header.type == 1 then return dofile("skin/" .. name .. "/system/default/5keys.lua").load(header)
-		elseif	header.type == 0 then return dofile("skin/" .. name .. "/system/default/7keys.lua").load(header)
-		elseif	header.type == 4 then return dofile("skin/" .. name .. "/system/default/9keys.lua").load(header)
-		elseif	header.type == 3 then return dofile("skin/" .. name .. "/system/default/10keys.lua").load(header)
-		elseif	header.type == 2 then return dofile("skin/" .. name .. "/system/default/14keys.lua").load(header)
-		end
+		return dofile("skin/" .. name .. "/system/default/" .. tostring(KEYS) .. "keys.lua").load(header)
 	end
 end
 
@@ -311,7 +295,7 @@ end
 ----------------------------------------------------------------------------------------------
 
 local folder_name = get_folder_name()
-local config_path = "skin/".. folder_name .. "/system/config/" .. get_tag_hub() .. get_skin_category(SKINTYPE) .. ".lua"
+local config_path = "skin/".. folder_name .. "/system/config/" .. get_tag_hub() .. tostring(KEYS) .. "keys.lua"
 local op = {
 	save_skin_config = {
 		OFF	= assign_property_op(),
@@ -385,12 +369,12 @@ local header = {
 		{name = "マスコット Mascot",					path = "../customize/mascot/*",			def = "off.png"},
 		{name = "動くマスコット MovingMascot",			path = "../customize/movingmascot/*",	def = "off.png"},
 		{name = "ぽみゅキャラ Pmchara",					path = "../customize/pmchara/*",		def = "off"},
-		
+
 		{name = "タイミングビジュアライザ TimingVisualizer",		path = "../customize/timingvisualizer/*",	def = "off"},
 		{name = "ヒットエラービジュアライザ HitErrorVisualizer",	path = "../customize/hiterrorvisualizer/*",	def = "off"},
 		{name = "ジャッジグラフ JudgeGraph",						path = "../customize/judgegraph/*",			def = "off"},
 		{name = "BPMグラフ BpmGraph",								path = "../customize/bpmgraph/*",			def = "off"},
-		
+
 		{name = "レーン背景 LaneBackground",			path = "../customize/lanebackground/*",		def = "default.png"},
 		{name = "レーン Lane",							path = "../customize/lane/*",				def = "beat"},
 		{name = "グロー Glow",							path = "../customize/glow/*",				def = "aqua"},
@@ -406,14 +390,14 @@ local header = {
 		{name = "判定文字 Judge",						path = "../customize/judge/*",				def = "default2"},
 		{name = "判定タイミング JudgeDetail",			path = "../customize/judgedetail/*",		def = "default-fastslow"},
 		{name = "ゴーストスコア GhostScore",			path = "../customize/ghost/*",				def = "default-target"},
-		
+
 		{name = "ロード中演出 Loading",				path = "../customize/effect/loading/*",		def = "default"},
 		{name = "開始演出 Start",					path = "../customize/effect/start/*",		def = "default"},
 		{name = "クリア演出 Clear",					path = "../customize/effect/clear/*",		def = "off"},
 		{name = "フルコンボ演出 FullCombo",			path = "../customize/effect/fullcombo/*",	def = "default"},
 		{name = "閉店演出 Failed",					path = "../customize/effect/failed/*",		def = "default"},
 		{name = "終了演出 Close",					path = "../customize/effect/close/*",		def = "default"},
-		
+
 		{name = "拡張機能1 Extension1",				path = "../customize/extension/*|1|",	def = "off"},
 		{name = "拡張機能2 Extension2",				path = "../customize/extension/*|2|",	def = "off"},
 		{name = "拡張機能3 Extension3",				path = "../customize/extension/*|3|",	def = "off"},
@@ -503,25 +487,14 @@ local header = {
 		}}
 	}
 }
-if header.type == 1 then
-	header.name = header.name .. " 5keys"
-	table.insert(header.filepath, 1, {name = "設定ファイル Settings", path = "../customize/settings/5keys/*", def = "default1P.lua"})
-elseif header.type == 0 then
-	header.name = header.name .. " 7keys"
-	table.insert(header.filepath, 1, {name = "設定ファイル Settings", path = "../customize/settings/7keys/*", def = "default1P.lua"})
-elseif header.type == 4 then
-	header.name = header.name .. " 9keys"
-	table.insert(header.filepath, 1, {name = "設定ファイル Settings", path = "../customize/settings/9keys/*", def = "default.lua"})
-elseif header.type == 3 then
-	header.name = header.name .. " 10keys"
-	table.insert(header.filepath, 1,	{name = "設定ファイル Settings",				path = "../customize/settings/10keys/*",	def = "default.lua"})
-	table.insert(header.filepath,		{name = "レーンカバー2P LaneCover2P",			path = "../customize/cover/lane/*|2|",		def = "default.png"})
-	table.insert(header.filepath,		{name = "リフトカバー2P LiftCover2P",			path = "../customize/cover/lift/*|2|",		def = "default.png"})
-	table.insert(header.filepath,		{name = "HIDDENカバー2P HiddenCover2P",			path = "../customize/cover/hidden/*|2|",	def = "default.png"})
-	table.insert(header.filepath,		{name = "フィニッシュカバー2P FinishCover2P",	path = "../customize/cover/finish/*|2|",	def = "default.png"})
-elseif header.type == 2 then
-	header.name = header.name .. " 14keys"
-	table.insert(header.filepath, 1,	{name = "設定ファイル Settings",				path = "../customize/settings/14keys/*",	def = "default.lua"})
+
+header.name = header.name .. " " .. tostring(KEYS) .. "keys"
+defside = ""
+if KEYS == 5 or KEYS == 7 then
+	defside = "1P"
+end
+table.insert(header.filepath, 1, {name = "設定ファイル Settings", path = "../customize/settings/" .. tostring(KEYS) .. "keys/*", def = "default" .. defside .. ".lua"})
+if KEYS == 10 or KEYS == 14 then
 	table.insert(header.filepath,		{name = "レーンカバー2P LaneCover2P",			path = "../customize/cover/lane/*|2|",		def = "default.png"})
 	table.insert(header.filepath,		{name = "リフトカバー2P LiftCover2P",			path = "../customize/cover/lift/*|2|",		def = "default.png"})
 	table.insert(header.filepath,		{name = "HIDDENカバー2P HiddenCover2P",			path = "../customize/cover/hidden/*|2|",	def = "default.png"})
@@ -542,7 +515,7 @@ load_skin_config(header, config_path)
 local function main()
 	-- スキン構成の保存
 	if skin_config.option["スキン構成の保存 SaveSkinConfig"] == op.save_skin_config.ON then output_skin_config(header, config_path) end
-	
+
 	-- 画面解像度の設定
 	if		skin_config.option["画面解像度 Resolution"] == op.resolution._4K	then header.w, header.h = 3840, 2160
 	elseif	skin_config.option["画面解像度 Resolution"] == op.resolution.WQHD	then header.w, header.h = 2560, 1440
@@ -552,11 +525,11 @@ local function main()
 	elseif	skin_config.option["画面解像度 Resolution"] == op.resolution.SVGA	then header.w, header.h = 800, 600
 	elseif	skin_config.option["画面解像度 Resolution"] == op.resolution.VGA	then header.w, header.h = 640, 480
 	end
-	
+
 	-- スキン初期化
 	local skin = require("modules.init").skin
 	for k, v in pairs(header) do skin[k] = v end
-	
+
 	-- 設定ファイル読込
 	local geometry = load_settings(skin_config.get_path(header.filepath[1].path), header, folder_name)
 	geometry.type = header.type
@@ -571,10 +544,10 @@ local function main()
 	geometry.input		= header.input
 	geometry.close		= header.close
 	geometry.fadeout	= header.fadeout
-	
+
 	-- フォント設定
 	skin.font = {{id = "system-font", path = get_font_path(skin_config.get_path("../customize/font/*.ttf"))}}
-	
+
 	-- Hub用
 	function get_simple_play_settings() return geometry end
 	local hub = {
@@ -590,34 +563,32 @@ local function main()
 			}
 		}
 	}
-	if header.type == 2 or header.type == 3 then
-		table.insert(hub.init.judge.judge, {id = "judge1", index = 0, images = {}, numbers = {}, shift = true})
+
+	table.insert(hub.init.judge.judge, {id = "judge1", index = 0, images = {}, numbers = {}, shift = true})
+	table.insert(hub.init.judge.destination, {id = "judge1"})
+	if KEYS == 10 or KEYS == 14 then
 		table.insert(hub.init.judge.judge, {id = "judge2", index = 1, images = {}, numbers = {}, shift = true})
-		table.insert(hub.init.judge.destination, {id = "judge1"})
 		table.insert(hub.init.judge.destination, {id = "judge2"})
-	else
-		table.insert(hub.init.judge.judge, {id = "judge1", index = 0, images = {}, numbers = {}, shift = true})
-		table.insert(hub.init.judge.destination, {id = "judge1"})
 	end
 	if PATH_HUB then
 		hub.flg.changed_bomb	= is_hub_changed_bomb()
 		hub.flg.changed_judge	= is_hub_changed_judge()
 		hub.flg.changed_fce		= is_hub_changed_fce()
 	end
-	
+
 	-- パーツ読込
 	add_frame(skin, load_frame(skin_config.get_path("../customize/frame/*"),					geometry))
-	
+
 	add_parts(skin, load_modules("skin/" .. folder_name .. "/system/modules/background.lua",	geometry),	"sps-background")
-	
+
 	add_parts(skin, load_parts(skin_config.get_path("../customize/extension/*|1|"),				geometry),	"sps-extension1")
 	add_parts(skin, load_parts(skin_config.get_path("../customize/extension/*|2|"),				geometry),	"sps-extension2")
 	add_parts(skin, load_parts(skin_config.get_path("../customize/extension/*|3|"),				geometry),	"sps-extension3")
 	add_parts(skin, load_parts(skin_config.get_path("../customize/extension/*|4|"),				geometry),	"sps-extension4")
 	add_parts(skin, load_parts(skin_config.get_path("../customize/extension/*|5|"),				geometry),	"sps-extension5")
-	
+
 	add_bga  (skin, load_modules("skin/" .. folder_name .. "/system/modules/bga.lua",			geometry),	"sps-bga")
-	
+
 	add_parts(skin, load_parts(skin_config.get_path("../customize/device/*"),					geometry),	"sps-device")
 	add_gauge(skin, load_parts(skin_config.get_path("../customize/gauge/*"),					geometry),	"sps-gauge")
 	add_parts(skin, load_parts(skin_config.get_path("../customize/scoregraph/*"),				geometry),	"sps-scoregraph")
@@ -633,7 +604,7 @@ local function main()
 	add_parts(skin, load_parts(skin_config.get_path("../customize/rankpace/*"),					geometry),	"sps-rankpace")
 	add_parts(skin, load_parts(skin_config.get_path("../customize/judgecount/*"),				geometry),	"sps-judgecount")
 	add_parts(skin, load_parts(skin_config.get_path("../customize/timeleft/*"),					geometry),	"sps-timeleft")
-	
+
 	add_parts(skin, load_modules("skin/" .. folder_name .. "/system/modules/lanebackground.lua",	geometry),	"sps-lanebackground")
 	add_parts(skin, load_parts(skin_config.get_path("../customize/lane/*"),							geometry),	"sps-lane")
 	add_parts(skin, load_parts(skin_config.get_path("../customize/glow/*"),							geometry),	"sps-glow")
@@ -647,25 +618,25 @@ local function main()
 	else add_parts(skin, hub.init.judge, "sps-judge") end
 	add_parts(skin, load_parts(skin_config.get_path("../customize/judgedetail/*"),					geometry),	"sps-judgedetail")
 	add_parts(skin, load_parts(skin_config.get_path("../customize/ghost/*"),						geometry),	"sps-ghost")
-	
+
 	add_parts(skin, load_parts(skin_config.get_path("../customize/timingvisualizer/*"),				geometry),	"sps-timingvisualizer")
 	add_parts(skin, load_parts(skin_config.get_path("../customize/hiterrorvisualizer/*"),			geometry),	"sps-hiterrorvisualizer")
 	add_parts(skin, load_parts(skin_config.get_path("../customize/judgegraph/*"),					geometry),	"sps-judgegraph")
 	add_parts(skin, load_parts(skin_config.get_path("../customize/bpmgraph/*"),						geometry),	"sps-bpmgraph")
-	
+
 	add_parts(skin, load_parts(skin_config.get_path("../customize/extension/*|6|"),					geometry),	"sps-extension6")
 	add_parts(skin, load_parts(skin_config.get_path("../customize/extension/*|7|"),					geometry),	"sps-extension7")
 	add_parts(skin, load_parts(skin_config.get_path("../customize/extension/*|8|"),					geometry),	"sps-extension8")
 	add_parts(skin, load_parts(skin_config.get_path("../customize/extension/*|9|"),					geometry),	"sps-extension9")
 	add_parts(skin, load_parts(skin_config.get_path("../customize/extension/*|10|"),				geometry),	"sps-extension10")
-	
+
 	add_parts(skin, load_parts(skin_config.get_path("../customize/effect/loading/*"),	geometry),	"sps-loading")
 	add_parts(skin, load_parts(skin_config.get_path("../customize/effect/start/*"),		geometry),	"sps-start")
 	add_parts(skin, load_parts(skin_config.get_path("../customize/effect/clear/*"),		geometry),	"sps-clear")
 	if not hub.flg.changed_fce then add_parts(skin, load_parts(skin_config.get_path("../customize/effect/fullcombo/*"),	geometry), "sps-fullcombo") end
 	add_parts(skin, load_parts(skin_config.get_path("../customize/effect/failed/*"),	geometry),	"sps-failed")
 	add_parts(skin, load_parts(skin_config.get_path("../customize/effect/close/*"),		geometry),	"sps-close")
-	
+
 	-- TODO: 効果あるのか
 	-- 画像ファイル先読み
 	for i, v in pairs(skin.source) do
@@ -674,7 +645,7 @@ local function main()
 			table.insert(skin.destination, i,	{id = "ahead-img-" .. v.id, dst = {{x = 0, y = 0, w = 1, h = 1}}})
 		end
 	end
-	
+
 	-- エラーメッセージ表示
 	if skin_config.option["エラーメッセージ表示 DisplayErrorMessage"] == op.disp_err.ON then
 		for i, v in pairs(err_msg) do
@@ -682,7 +653,7 @@ local function main()
 			table.insert(skin.destination, {id = "error-" .. i, dst = {{x = 0, y = 1080 - (i * 22), w = 20, h = 20, r = 255, g = 200, b = 60}}})
 		end
 	end
-	
+
 	return skin
 end
 ----------------------------------------------------------------------------------------------

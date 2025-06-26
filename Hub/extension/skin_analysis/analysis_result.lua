@@ -1259,6 +1259,8 @@ def = OFF, category = FINISHカバーの置換(Hub), }
 
 {id = "duration-green", align = 2, w = 160, y = 26, digit = 4, src = "src-duration", x = 0, h = 26, divx = 10, ref = 313, },
 
+{id = "duration-yellow", align = 2, w = 160, y = 26, digit = 4, src = "src-duration", x = 0, h = 26, divx = 10, ref = 312, },
+
 {id = "ghost-mybest", align = 2, w = 216, y = 0, digit = 6, src = "src-ghost", x = 0, h = 40, divx = 12, divy = 2, ref = 152, },
 
 {id = "ex-rate-n", w = 143, y = 17, digit = 3, src = "src-ex-rate", x = 0, h = 17, divx = 11, ref = 102, },
@@ -2000,6 +2002,14 @@ def = OFF, category = FINISHカバーの置換(Hub), }
 	{y = 228, x = 650.5, h = 26, w = 16, },
 },op = {270, 272}, },
 
+{id = "duration-yellow", offset = 4, dst = {
+	{y = 1086, x = 602.5, h = 26, w = 16, },
+},op = {270}, },
+
+{id = "duration-yellow", offset = 3, dst = {
+	{y = 228, x = 602.5, h = 26, w = 16, },
+},op = {270, 272}, },
+
 {id = "lanecover-white", offset = 4, dst = {
 	{y = 1086, x = 1205.5, h = 26, w = 16, },
 },op = {270}, },
@@ -2014,6 +2024,14 @@ def = OFF, category = FINISHカバーの置換(Hub), }
 
 {id = "duration-green", offset = 3, dst = {
 	{y = 228, x = 1301.5, h = 26, w = 16, },
+},op = {270, 272}, },
+
+{id = "duration-yellow", offset = 4, dst = {
+	{y = 1086, x = 1253.5, h = 26, w = 16, },
+},op = {270}, },
+
+{id = "duration-yellow", offset = 3, dst = {
+	{y = 228, x = 1253.5, h = 26, w = 16, },
 },op = {270, 272}, },
 
 {loop = -1, filter = 1, offsets = {3}, id = "bomb11", timer = 51, dst = {

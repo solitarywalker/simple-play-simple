@@ -21,7 +21,7 @@ local function load(g)
 		{id = "lanecover-white",	src = "src-duration", x = 0, y = 0, w = duration_width, h = duration_height, divx = 10, digit = 4, align = 2, ref = 14},
 		{id = "liftcover-white",	src = "src-duration", x = 0, y = 0, w = duration_width, h = duration_height, divx = 10, digit = 4, align = 2, ref = 314},
 		{id = "duration-green",		src = "src-duration", x = 0, y = duration_height, w = duration_width, h = duration_height, divx = 10, digit = 4, align = 2, ref = 313},
-		{id = "duration-yellow",	src = "src-duration", x = 0, y = duration_height, w = duration_width, h = duration_height, divx = 10, digit = 4, align = 2, ref = 312}
+		{id = "duration-yellow",	src = "src-duration", x = 0, y = duration_height * 2, w = duration_width, h = duration_height, divx = 10, digit = 4, align = 2, ref = 312}
 	}
 
 	parts.destination = {}

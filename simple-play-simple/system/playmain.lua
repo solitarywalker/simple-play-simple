@@ -274,8 +274,14 @@ local function get_font_path(path)
 end
 
 -- フォルダ名を取得する
+-- beatoraja 0.8.9 から package.path に追記されるスキンディレクトリが絶対パスに
+-- なったため ("?.lua;skin/A/B/system/?.lua" -> "?.lua;/var/lib/beatoraja/skin/A/B/system/?.lua")、
+-- 12 文字目固定では "lib/beatoraja/skin/A/B" のようにずれる。末尾の項目を
+-- 取り出してから skin/ 以降を取る形にして、相対でも絶対でも同じ結果にする。
 local function get_folder_name()
-	return string.sub(tostring(package.path), 12, string.len(tostring(package.path)) - 13)
+	local dir = string.match(tostring(package.path), "([^;]+)/%?%.lua$") or ""
+	dir = string.gsub(dir, "/system$", "")
+	return string.match(dir, "^skin/(.+)$") or string.match(dir, "^.-/skin/(.+)$") or dir
 end
 
 -- オプション番号を割り当てる

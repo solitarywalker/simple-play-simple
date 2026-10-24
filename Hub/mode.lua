@@ -21,8 +21,13 @@ local function file_exists(path)
 end
 
 -- simple-playフォルダ名を取得する
+-- beatoraja 0.8.9 から PATH_SKIN (= package.path) に入るスキンディレクトリが
+-- 絶対パスになったので、12 文字目固定では取れない。playmain.lua の
+-- get_folder_name() と同じ取り方にする。
 local function get_sp_folder_name()
-	return string.sub(tostring(PATH_SKIN), 12, string.len(tostring(PATH_SKIN)) - 13)
+	local dir = string.match(tostring(PATH_SKIN), "([^;]+)/%?%.lua$") or ""
+	dir = string.gsub(dir, "/system$", "")
+	return string.match(dir, "^skin/(.+)$") or string.match(dir, "^.-/skin/(.+)$") or dir
 end
 
 -- スキンを識別する

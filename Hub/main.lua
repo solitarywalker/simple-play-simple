@@ -2029,7 +2029,13 @@ if mode_simple_play() then
 		end
 		return "error"
 	end
-	local folder_name = string.sub(tostring(PATH_SKIN), 12, string.len(tostring(PATH_SKIN)) - 13)
+	-- beatoraja 0.8.9 から PATH_SKIN (= package.path) に入るスキンディレクトリが
+	-- 絶対パスになったので、12 文字目固定では取れない。
+	local folder_name = (function()
+		local dir = string.match(tostring(PATH_SKIN), "([^;]+)/%?%.lua$") or ""
+		dir = string.gsub(dir, "/system$", "")
+		return string.match(dir, "^skin/(.+)$") or string.match(dir, "^.-/skin/(.+)$") or dir
+	end)()
 	-- スキン構成を読み込む
 	local status, parts = pcall(function() return dofile("skin/".. folder_name .. "/system/config/hub" .. get_skin_category(SKINTYPE) .. ".lua") end)
 	if status and parts then

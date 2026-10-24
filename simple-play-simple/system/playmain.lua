@@ -319,6 +319,10 @@ local op = {
 		XGA		= assign_property_op(),
 		SVGA	= assign_property_op(),
 		VGA		= assign_property_op()
+	},
+	follow_lanecover = {
+		OFF	= assign_property_op(),
+		ON	= assign_property_op()
 	}
 }
 
@@ -351,7 +355,11 @@ local header = {
 			{name = "XGA(1024x768)",	op = op.resolution.XGA},
 			{name = "SVGA(800x600)",	op = op.resolution.SVGA},
 			{name = "VGA(640x480)",		op = op.resolution.VGA}
-		}, def = "FHD(1920x1080)"}
+		}, def = "FHD(1920x1080)"},
+		{name = "レーンカバー追従 FollowLaneCover", item = {
+			{name = "OFF",	op = op.follow_lanecover.OFF},
+			{name = "ON",	op = op.follow_lanecover.ON}
+		}, def = "OFF"}
 	},
 	filepath = {
 		{name = "システムフォント Font",				path = "../customize/font/*.ttf",		def = "mgenplus-1c-bold.ttf"},
@@ -466,6 +474,7 @@ local header = {
 			"フィニッシュカバー1P FinishCover1P",
 			"フィニッシュカバー2P FinishCover2P",
 			"カバー数値 CoverDuration",
+			"レーンカバー追従 FollowLaneCover",
 			"ボム Bomb",
 			"判定文字 Judge",
 			"判定タイミング JudgeDetail",
@@ -550,6 +559,8 @@ local function main()
 	geometry.input		= header.input
 	geometry.close		= header.close
 	geometry.fadeout	= header.fadeout
+	-- ソフラン追従レーンカバー(system/modules/cover.luaで使用)
+	geometry.follow_lanecover = skin_config.option["レーンカバー追従 FollowLaneCover"] == op.follow_lanecover.ON
 
 	-- フォント設定
 	skin.font = {{id = "system-font", path = get_font_path(skin_config.get_path("../customize/font/*.ttf"))}}

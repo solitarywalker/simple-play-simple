@@ -15,14 +15,15 @@ local NUM = {
 	NOWBPM		= 160
 }
 local OP = {
+	CONSTANT		= 400,	-- PlayConfig.isEnableConstant (CONSTANTアシスト) 追従のON/OFFに使う
 	LANECOVER1_ON	= 271,	-- PlayConfig.isEnablelanecover
 	LIFT1_ON		= 272	-- PlayConfig.isEnablelift
 }
--- 定速(HI-SPEED FIX)が有効かどうかを表すオプションは beatoraja に無い
--- (OPTION 400 は PlayConfig.isEnableConstant = 譜面の#SPEEDを無視するCONSTANTアシストで別物)。
--- 定速の種別は event_index(BUTTON_HSFIX) でしか取れないので、描画条件ではなく
--- 下の get_adjusted_cover() 側で判定する。定速OFFなら本来のカバー量をそのまま返すので
--- 本来のレーンカバーに完全に重なり、見た目は変わらない。
+-- 追従のON/OFFはプレイ中に切り替えられるよう CONSTANT (OPTION 400) に割り当てる。
+-- 定速(HI-SPEED FIX)が有効かどうかを表すオプションは beatoraja に無く、種別も
+-- event_index(BUTTON_HSFIX) でしか取れないので、そちらは下の get_adjusted_cover()
+-- 側で判定する。定速OFFなら本来のカバー量をそのまま返すので、CONSTANTがONでも
+-- 本来のレーンカバーに完全に重なって見た目は変わらない。
 local BUTTON_HSFIX = 55
 local HSFIX = {OFF = 0, START = 1, MAX = 2, MAIN = 3, MIN = 4}
 
@@ -171,13 +172,14 @@ local function load(g)
 	end
 
 	-- ソフラン追従レーンカバー(本来のレーンカバーの直後に重ねる)
-	-- サドプラ無効時は描かない。NUMBER_LANECOVER1 は無効でも設定値を返すので、
-	-- これが無いとサドプラOFFでもカバーが出てしまう。
+	-- CONSTANTがONかつサドプラ有効のときだけ描く。NUMBER_LANECOVER1 は
+	-- サドプラ無効でも設定値を返すので、LANECOVER1_ON が無いとサドプラOFFでも
+	-- カバーが出てしまう。
 	-- 半透明のレーンカバー画像を使っている場合は重なった部分が濃くなる点に注意。
 	if g.follow_lanecover then
 		for i = 1, #g.lanes.x do
 			table.insert(parts.slider, {id = "adjustcover" .. i, src = "src-lanecover" .. i, x = 0, y = 0, w = -1, h = -1, angle = 2, range = cover.h[i], value = get_adjusted_cover})
-			table.insert(parts.destination, #g.lanes.x + i, {id = "adjustcover" .. i, loop = 1300, filter = 1, stretch = 3, op = {OP.LANECOVER1_ON}, dst = {
+			table.insert(parts.destination, #g.lanes.x + i, {id = "adjustcover" .. i, loop = 1300, filter = 1, stretch = 3, op = {OP.CONSTANT, OP.LANECOVER1_ON}, dst = {
 				{time = 0, x = cover.x[i], y = cover.y_lane[i] * 2, w = cover.w[i], h = cover.h[i], acc = 2},
 				{time = 1300, y = cover.y_lane[i]}
 			}})

@@ -27,17 +27,35 @@ local OP = {
 local BUTTON_HSFIX = 55
 local HSFIX = {OFF = 0, START = 1, MAX = 2, MAIN = 3, MIN = 4}
 
+-- beatoraja 0.8.9 から main_state はグローバルに入らない。
+-- SkinLuaAccessor.exportMainStateAccessor() は isGlobal のときだけ globals に入れ、
+-- それ以外は PackageLib.setIsLoaded("main_state", t) で package.loaded に登録する。
+-- プレイスキンの経路 (new LuaSkinLoader(mainState, config) -> new SkinLuaAccessor(false))
+-- は isGlobal = false なので require("main_state") でしか取れない。
+-- 0.8.8 以前のグローバルも一応見る。
+local state = nil
+local function get_state()
+	if state then return state end
+	if main_state then
+		state = main_state
+	else
+		local ok, m = pcall(require, "main_state")
+		if ok and m then state = m end
+	end
+	return state
+end
+
 -- 定速の基準BPM
 local start_bpm = nil
-local function get_reference_bpm()
-	local fix = main_state.event_index(BUTTON_HSFIX)
-	if		fix == HSFIX.MAX	then return main_state.number(NUM.MAXBPM)
-	elseif	fix == HSFIX.MAIN	then return main_state.number(NUM.MAINBPM)
-	elseif	fix == HSFIX.MIN	then return main_state.number(NUM.MINBPM)
+local function get_reference_bpm(s)
+	local fix = s.event_index(BUTTON_HSFIX)
+	if		fix == HSFIX.MAX	then return s.number(NUM.MAXBPM)
+	elseif	fix == HSFIX.MAIN	then return s.number(NUM.MAINBPM)
+	elseif	fix == HSFIX.MIN	then return s.number(NUM.MINBPM)
 	elseif	fix == HSFIX.START	then
 		-- 開始BPMは数値プロパティに無いので最初に観測した現在BPMで代用する
 		if not start_bpm then
-			local now = main_state.number(NUM.NOWBPM)
+			local now = s.number(NUM.NOWBPM)
 			if now > 0 then start_bpm = now end
 		end
 		return start_bpm
@@ -47,13 +65,16 @@ end
 
 -- 追従後のカバー量(0-1 上からの被覆率)
 local function get_adjusted_cover()
-	local lanecover	= main_state.number(NUM.LANECOVER1) / 1000
+	local s = get_state()
+	-- main_state が取れないときは引っ込める(本来のレーンカバーは別に描かれている)
+	if not s then return 0 end
+	local lanecover	= s.number(NUM.LANECOVER1) / 1000
 	local lift		= 0
-	if main_state.option(OP.LIFT1_ON) then lift = main_state.number(NUM.LIFT1) / 1000 end
+	if s.option(OP.LIFT1_ON) then lift = s.number(NUM.LIFT1) / 1000 end
 	-- 実際のカバー量。beatoraja が本来のレーンカバーに使う値と同じ
 	local covered = (1 - lift) * lanecover
-	local ref = get_reference_bpm()
-	local now = main_state.number(NUM.NOWBPM)
+	local ref = get_reference_bpm(s)
+	local now = s.number(NUM.NOWBPM)
 	if not ref or ref <= 0 or now <= 0 then return covered end
 	-- 可視領域をBPM比で縮める
 	local value = covered + ((1 - lift) * (1 - lanecover)) * (1 - (now / ref))
